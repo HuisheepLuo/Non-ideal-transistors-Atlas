@@ -76,7 +76,7 @@ def param_input(device_width, device_length, device_C_ox, device_thickness_sc, v
     return imgs
 
 
-class iface_lib():
+class interface_lib():
     def __init__(self):
         pass
     
@@ -105,7 +105,7 @@ class iface_lib():
             Vth0 = gr.Number(value=0.1, label="Vth0(V)")
         with gr.Row():
             scan_type = gr.Radio(['Transfer', 'Output'], value="Transfer", label="scan_type")
-            is_back_mode = gr.Checkbox(value=True, label="scan back")
+            is_back_mode = gr.Checkbox(value=True, label="scan back(Triangular wave)")
             is_log_mode = gr.Checkbox(value=False, label="log scale")
             is_sqrt_mode = gr.Checkbox(value=False, label="Sqrt-Current")
             is_normalized = gr.Checkbox(value=False, label="Normalized")

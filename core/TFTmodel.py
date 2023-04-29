@@ -19,7 +19,7 @@ class TFT_property:
     `TFT_property` is a class for storing the property or parameters of the device.
     '''
 
-    def __init__(self, device_width, device_length, device_C_ox, device_thickness_sc):
+    def __init__(self, device_width, device_length, device_C_ox=2e-7, device_thickness_sc=40):
         '''
         device_width: Channel width-W(um), 
         device_length: Channel length-L(um), 

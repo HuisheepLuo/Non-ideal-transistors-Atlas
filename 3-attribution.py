@@ -13,12 +13,13 @@ os.environ["KMP_DUPLICATE_LIB_OK"]="TRUE" # fix errors for multiple libiomp5md.d
 device = torch.device("cpu") # CUDA is not necessary for non-training mode
 
 save_dir = 'results\\models\\'
-save_model_name = 'epoch_20_stru_200_256_4.pth'
+save_model_name = 'epoch_100_stru_200_256_4.pth'
 stru = [200, 256, 4]
 model = MLP(stru).to(device)
 loss_fn = torch.nn.CrossEntropyLoss()
 optimizer = torch.optim.AdamW(model.parameters(), lr=1e-3)
 model.load_state_dict(torch.load(save_dir+save_model_name))
+model.eval()
 
 random.seed(20)
 

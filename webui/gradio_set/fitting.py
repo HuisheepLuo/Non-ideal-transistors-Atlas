@@ -148,7 +148,7 @@ def param_fit_input(device_width, device_length, device_C_ox, device_thickness_s
     return outp_text, imgs
 
 
-class iface_fit():
+class interface_fit():
     def __init__(self):
         pass
     
