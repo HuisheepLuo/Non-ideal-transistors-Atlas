@@ -64,7 +64,7 @@ attr_idx = np.argmin(np.abs(np.mean(V_matrix, axis=1)))
 # print(np.abs(np.mean(V_matrix, axis=1)))
 print(f'attr_idx: {attr_idx}.')
 
-# -------------------- plot the fitting curves ---------------------------- #
+# -------------------- plot the matching curves ---------------------------- #
 plt.rcParams['font.sans-serif'] = ['Arial']
 plt.rcParams['font.size'] = 16
 plt.figure(figsize=(6, 4))

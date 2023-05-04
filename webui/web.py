@@ -4,18 +4,18 @@ import sys
 sys.path.append(os.getcwd())
 
 from webui.gradio_set.params import interface_lib, param_input
-from webui.gradio_set.fitting import interface_fit, param_fit_input
+from webui.gradio_set.match import interface_fit, param_fit_input
 
 
 intf_lib = interface_lib()
 intf_fit = interface_fit()
 
 with gr.Blocks() as demo:
-    with gr.Tab(label="Non-ideal Model Atlas"):
+    with gr.Tab(label="Atlas"):
         # Tab 1
         gr.Markdown(intf_lib.describe())
         with gr.Column():
-            with gr.Row():
+            with gr.Column():
                 inps = intf_lib.ui()
             with gr.Row():
                 outps = gr.Gallery().style(
@@ -26,7 +26,7 @@ with gr.Blocks() as demo:
         btn = gr.Button("Run")
         btn.click(fn=param_input, inputs=inps, outputs=outps)
     
-    with gr.Tab(label="Fitting"):
+    with gr.Tab(label="Matching"):
         # Tab 2
         gr.Markdown(intf_fit.describe())
         with gr.Column():

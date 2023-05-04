@@ -123,7 +123,7 @@ def param_fit_input(device_width, device_length, device_C_ox, device_thickness_s
         f, ax = plt.subplots(1,1, figsize=(6,6))
         f.subplots_adjust(left=0.2, right=0.95)
         ax.scatter(seq_test[0], seq_test[1], label='Exp. data', color='red')
-        ax.plot(point_lib[i]['sequence'][0], point_lib[i]['sequence'][1], label='Fitting')
+        ax.plot(point_lib[i]['sequence'][0], point_lib[i]['sequence'][1], label='Match')
 
         if transfer_mode:
             ax.set_xlabel('Gate Voltage (V)')
@@ -153,7 +153,7 @@ class interface_fit():
         pass
     
     def title(self):
-        return "Non-ideal model Atlas Fitting"
+        return "Non-ideal model Atlas Matching"
 
     def show(self):
         return True
@@ -162,7 +162,7 @@ class interface_fit():
         description = """
         ## Quick Start
         1. Click the example below, and click `Fit` button.
-        2. Drop experimental data for fitting(.csv or .xlsx).
+        2. Drop experimental data for matching(.csv or .xlsx).
         ## Note: 
         1. A plot is generated for each value rather than each row of values in `Scanning Nonideal Parameters`.
         2. The format of a input file: first column: `Voltage`; second column: `Current`. 
