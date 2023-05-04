@@ -3,35 +3,35 @@ import os
 import sys
 sys.path.append(os.getcwd())
 
-from webui.gradio_set.params import iface_lib, param_input
-from webui.gradio_set.fitting import iface_fit, param_fit_input
+from webui.gradio_set.params import interface_lib, param_input
+from webui.gradio_set.fitting import interface_fit, param_fit_input
 
 
-iface1 = iface_lib()
-iface2 = iface_fit()
+intf_lib = interface_lib()
+intf_fit = interface_fit()
 
 with gr.Blocks() as demo:
     with gr.Tab(label="Non-ideal Model Atlas"):
         # Tab 1
-        gr.Markdown(iface1.describe())
+        gr.Markdown(intf_lib.describe())
         with gr.Column():
             with gr.Row():
-                inps = iface1.ui()
+                inps = intf_lib.ui()
             with gr.Row():
                 outps = gr.Gallery().style(
                     grid=[4], 
                     height="auto"
                 )
-        title = iface1.title()
+        title = intf_lib.title()
         btn = gr.Button("Run")
         btn.click(fn=param_input, inputs=inps, outputs=outps)
     
     with gr.Tab(label="Fitting"):
         # Tab 2
-        gr.Markdown(iface2.describe())
+        gr.Markdown(intf_fit.describe())
         with gr.Column():
             with gr.Column():
-                inps = iface2.ui()
+                inps = intf_fit.ui()
             with gr.Column():
                 outps = [
                     gr.Textbox(label='Extract value'),
@@ -52,7 +52,7 @@ with gr.Blocks() as demo:
                     [0.1, 0.3, 0.06, 0.02],
                     [0.3, 0.6, 0.1, 0.5],
                 ], 
-                os.path.join(os.path.dirname(__file__), "transfer_example.csv")
+                os.path.join(os.path.dirname(__file__), "example_curves\\transfer_example.csv")
             ],
             [
                 1000, 10, 1e-8, 40, 20,
@@ -62,7 +62,7 @@ with gr.Blocks() as demo:
                     [0.1, 0.3, 0.06, 0.02],
                     [0.3, 0.6, 0.1, 0.5],
                 ], 
-                os.path.join(os.path.dirname(__file__), "transfer_example_k.csv")
+                os.path.join(os.path.dirname(__file__), "example_curves\\transfer_example_k.csv")
             ],
             ],
             inputs=inps,
@@ -70,7 +70,7 @@ with gr.Blocks() as demo:
             fn=param_fit_input,
             cache_examples=False,
         )
-        title = iface2.title()
+        title = intf_fit.title()
         btn = gr.Button("Fit")
         btn.click(fn=param_fit_input, inputs=inps, outputs=outps)
 
