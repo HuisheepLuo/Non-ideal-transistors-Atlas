@@ -1,5 +1,5 @@
 # Non-ideal transistors Atlas
-Non-ideal transistor Atlas is a Python based tool for identify the non-ideal effect transistors.
+Non-ideal transistor Atlas is a Python based tool for the identification of the non-ideal effect transistors.
 
 The classification approach is a simple MLP network based on Pytorch. It could classify non-ideal effects of transistors, namely charge transport, charge injection, charge trapping, and dynamic ionic capacitance.
 
