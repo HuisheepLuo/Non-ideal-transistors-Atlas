@@ -11,12 +11,12 @@ seed = 34658746980
 torch.manual_seed(seed)
 torch.cuda.manual_seed(seed)
 
-batch_size = 32
+batch_size = 1
 data = point_dataset("dataset\\train_set.csv")
 dataloader = DataLoader(data, batch_size=batch_size)
 
 stru = [200, 256, 4]
-epoches = 100
+epoches = 200
 cur_path = os.path.dirname(__file__)
 model = MLP(stru)
 loss_fn = torch.nn.CrossEntropyLoss()

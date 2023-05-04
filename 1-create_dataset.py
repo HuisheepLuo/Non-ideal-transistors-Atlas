@@ -27,10 +27,10 @@ TFT_sample.renew_param('ion_multiple', 0.02)
 # }
 
 train_param_group = {
-    'mu1_power': np.linspace(0.3, 0.7, 50), 
-    'P0': np.logspace(-1, 1, 50), 
-    'barrier': np.linspace(0.3, 1, 50),
-    'ion_multiple': np.linspace(2, 20, 50), 
+    'mu1_power': np.linspace(0.1, 0.5, 50), 
+    'P0': np.logspace(-2, 0, 50), 
+    'barrier': np.linspace(0.1, 1, 50),
+    'ion_multiple': np.linspace(0.02, 20, 50), 
 }
 
 
