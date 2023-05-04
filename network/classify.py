@@ -14,7 +14,10 @@ class MLP(nn.Module):
         return self.out
     
     def loss(self, out, label, loss_func):
-        return loss_func(out, label)
+        if out.dim() == 1:
+            return loss_func(out.unsqueeze(dim=0), label)
+        else:
+            return loss_func(out, label)
 
 def train(net, dataloader, loss_func, optimizer, epoches):
     size = len(dataloader.dataset)

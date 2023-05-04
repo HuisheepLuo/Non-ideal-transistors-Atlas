@@ -106,3 +106,88 @@ def visualize(attributions):
     # cumsum = np.cumsum(attributions) / np.sum(attributions)
     return locsum
 
+def atlas_with_attribute(nrow, ncol, attr_matrix, training_data):
+    '''
+    Plot the Atlas with attribution.
+
+    Args:
+        nrow[int]: Rows of the shown atlas
+        ncol[int]: Columns of the shown atlas, nrow * ncol ≤ dataset_size
+        attr_matrix[np.ndarray or torch.tensor]: the attribution of all dataset
+        training_data[point_set class]: training dataset
+
+        
+    Returns:
+        f, ax: plt common returns
+        
+    '''
+
+    dataset_size = len(training_data)
+    # show_size = nrow * ncol if nrow * ncol < dataset_size else dataset_size
+    X = np.array(list(range(100)))
+    X_attr0 = np.array([12.5, 37.5, 62.5, 87.5])
+    Y_attr_for = np.array([0.25, 0.25, 0.25, 0.25])
+    Y_attr_back = np.array([0.75, 0.75, 0.75, 0.75])
+    Y_attr = np.concatenate((Y_attr_for, Y_attr_back), axis=0)
+    f, ax = plt.subplots(nrow,ncol,sharex=True,sharey=True,figsize=(nrow*2,ncol*0.2))
+    for i in range(0, dataset_size):
+        attributions = attr_matrix[i]
+        Y = training_data[i]['data']
+        row, col = i // ncol, i % ncol
+        Y = Y.detach().numpy().squeeze()
+        Y_forward = Y[0:100]
+        Y_backward = Y[::-1][0:100]
+        attr_visual = visualize(attributions.squeeze()) 
+        attr_forward = attr_visual[0:4]
+        attr_backward = attr_visual[::-1][0:4]
+        X_attr = np.concatenate((X_attr0, X_attr0), axis=0)
+        attr = np.concatenate((attr_forward, attr_backward), axis=0)
+        attr_norm = (attr - attr.min(axis=0)) / (attr.max(axis=0) - attr.min(axis=0))
+        ax[row,col].plot(X, Y_forward)
+        ax[row,col].plot(X, Y_backward)
+        ax[row,col].set_xticks([])
+        ax[row,col].set_yticks([])
+        image = ax[row,col].scatter(X_attr, Y_attr, s=45*attr+5, c=attr_norm, cmap='RdBu_r')
+    f.subplots_adjust(hspace=0, wspace=0)
+    position = f.add_axes([0.125, 0.05, 0.775, 0.03])
+    f.colorbar(image, cax=position, orientation='horizontal', label='Attribution value(a.u.)')
+    return f, ax
+
+def atlas_with_similarity(nrow, ncol, attr_matrix, training_data, exp_line):
+    '''
+    Plot the Atlas with similarity.
+
+    Args:
+        nrow[int]: Rows of the shown atlas
+        ncol[int]: Columns of the shown atlas
+        attr_matrix[np.ndarray or torch.tensor]: the attribution of all dataset
+        training_data[point_set class]: training dataset
+        exp_line[np.ndarray or torch.tensor]: input line
+
+        
+    Returns:
+        f, ax: plt common returns
+        
+    '''
+    dataset_size = len(training_data)
+    exp_matrix = np.tile(exp_line.detach().numpy(), (dataset_size, 1))
+    dataset_matrix = training_data.df.iloc[:,:200].to_numpy()
+    V_matrix = (exp_matrix - dataset_matrix) * attr_matrix
+    V = np.abs(np.mean(V_matrix, axis=1)).astype('float64')
+    s = np.argsort(V)
+    # print(s)
+    s_2 = list(range(len(s)))
+    for i in range(len(s)):
+        s_2[s[i]] = i
+    # print(s_2)
+    s_norm = (s_2 - np.min(s_2)) / (np.max(s_2) - np.min(s_2))
+    # print(s_norm)
+
+    f, ax = plt.subplots(1,1,figsize=(nrow*2,ncol*0.2))
+    image = ax.pcolor(1 - np.reshape(s_norm, (nrow, ncol)), cmap='RdBu_r', edgecolors='k', linewidths=1)
+    ax.invert_yaxis()
+    ax.set_xticks([])
+    ax.set_yticks([])
+    position = f.add_axes([0.125, 0.05, 0.775, 0.03])
+    f.colorbar(image, cax=position, orientation='horizontal', label='Similarity evaluation value(a.u.)', ticks=[1.0, 0.8, 0.6, 0.4, 0.2, 0.0])
+    return f, ax
