@@ -9,10 +9,9 @@ plt.rcParams['font.size'] = 16
 plt.rcParams['font.sans-serif'] = ['Arial']
 
 def param_input(device_width, device_length, device_C_ox, device_thickness_sc, voltage_fix, 
-                voltage_max, mu0, Vth0, scan_type, is_back_mode, is_log, is_sqrt_mode, is_normalized, df_in):
+                voltage_max, mu0, Vth0, scan_type, wav_type, is_log, is_sqrt_mode, is_normalized, df_in):
     TFT_prop = TFT_property(device_width, device_length, device_C_ox, device_thickness_sc)
 
-    scan_time_step = 1
     voltage_step = voltage_max / 100
 
     if scan_type.lower() == 'transfer':
@@ -20,7 +19,7 @@ def param_input(device_width, device_length, device_C_ox, device_thickness_sc, v
     else: transfer_mode = False
 
     s_core = scan_core(transfer_mode, voltage_fix, voltage_max, voltage_step,
-                    property=TFT_prop, back=is_back_mode, scan_time_step=scan_time_step)
+                    property=TFT_prop, wav_type=wav_type)
     
     TFT_prop.renew_param('mu10', mu0)
     TFT_prop.renew_param('mu20', mu0)
@@ -30,6 +29,10 @@ def param_input(device_width, device_length, device_C_ox, device_thickness_sc, v
         x_name = 'VG'
     else:
         x_name = 'VD'
+
+    if wav_type  == '1xspk' or wav_type  == '5xspk':
+        x_name = 't_array'
+
     if is_sqrt_mode:
         y_name = 'I_tot_sqrt'
     else:
@@ -44,21 +47,29 @@ def param_input(device_width, device_length, device_C_ox, device_thickness_sc, v
     for i in range(counts):
         f, ax = plt.subplots(1,1, figsize=(6,6))
         f.subplots_adjust(left=0.2, right=0.95)
-        ax.plot(point_lib[i]['sequence'][0][:100], point_lib[i]['sequence'][1][:100])
-        ax.plot(point_lib[i]['sequence'][0][100:], point_lib[i]['sequence'][1][100:])
+        if wav_type == 'tri':
+            ax.plot(point_lib[i]['sequence'][0][:100], point_lib[i]['sequence'][1][:100])
+            ax.plot(point_lib[i]['sequence'][0][100:], point_lib[i]['sequence'][1][100:])
+        else:
+            ax.plot(point_lib[i]['sequence'][0], point_lib[i]['sequence'][1])
 
         if transfer_mode:
             ax.set_xlabel('Gate Voltage (V)')
         else:
             ax.set_xlabel('Drain Voltage (V)')
+
+        if wav_type == '1xspk' or wav_type  == '5xspk':
+            ax.set_xlabel('Time (s)')
+
         if is_normalized:
             ax.set_xticks([0, 1])
-            ax.set_xticklabels(['0', '|Vmax|'])
+            ax.set_xticklabels(['0', '|max|'])
             ax.set_yticks([0, 1])
             ax.set_yticklabels(['0', 'max'])
 
         if is_log:
             ax.set_yscale('log')
+
         if is_sqrt_mode:
             ax.set_ylabel('Sqrt Drain Current (A^0.5)')
         else:
@@ -101,7 +112,8 @@ class interface_lib():
                 Vth0 = gr.Number(value=0.1, label="Vth0(V)")
             with gr.Row():
                 scan_type = gr.Radio(['Transfer', 'Output'], value="Transfer", label="scan_type")
-                is_back_mode = gr.Checkbox(value=True, label="scan back(Triangular wave)")
+                wav_type = gr.Radio(['tri', 'lin', '1xspk', '5xspk'], value="tri", label="wave_type")
+                # is_back_mode = gr.Checkbox(value=True, label="scan back(Triangular wave)")
                 is_log_mode = gr.Checkbox(value=False, label="log scale")
                 is_sqrt_mode = gr.Checkbox(value=False, label="Sqrt-Current")
                 is_normalized = gr.Checkbox(value=False, label="Normalized")
@@ -120,5 +132,5 @@ class interface_lib():
             device_width, device_length, 
             device_C_ox, device_thickness_sc, voltage_fix, 
             voltage_max, mu0, Vth0, 
-            scan_type, is_back_mode, is_log_mode, is_sqrt_mode, is_normalized, df
+            scan_type, wav_type, is_log_mode, is_sqrt_mode, is_normalized, df
         ]

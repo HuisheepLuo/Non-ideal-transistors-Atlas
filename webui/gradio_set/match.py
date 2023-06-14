@@ -17,7 +17,6 @@ def param_fit_input(device_width, device_length, device_C_ox, device_thickness_s
                 semi_type, df_in, input_file_object):
     #-----------------------------------------------#
     TFT_prop = TFT_property(device_width, device_length, device_C_ox, device_thickness_sc)
-    scan_time_step = 1
     voltage_step = voltage_max / 100
     outp_text = ''
     # input file check
@@ -44,7 +43,7 @@ def param_fit_input(device_width, device_length, device_C_ox, device_thickness_s
     else: transfer_mode = False
 
     s_core = scan_core(transfer_mode, voltage_fix, voltage_max, voltage_step,
-                    property=TFT_prop, back=is_back_mode, scan_time_step=scan_time_step)
+                    property=TFT_prop, back=is_back_mode)
     
     TFT_prop.renew_param('mu10', mu0)
     TFT_prop.renew_param('mu20', mu0)

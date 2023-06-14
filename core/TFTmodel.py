@@ -110,13 +110,12 @@ class scan_core:
     '''
     generating point
     '''
-    def __init__(self,transfer_mode:bool, voltage_fix, voltage_max, voltage_step, property:TFT_property,back:bool=True, scan_time_step=1):
+    def __init__(self,transfer_mode:bool, voltage_fix, voltage_max, voltage_step, property:TFT_property,back:bool=True, wav_type='tri'):
         '''
         transfer_mode: Scanning Gate voltage(True) or Drain voltage(False).
         voltage_fix(V): Fixed voltage during scanning. If transfer_mode is True(VG), then VD will be fixed at this value.
         voltage_max(V): Maximum scanning voltage.
         voltage_step(V/s): Scanning step.
-        scan_time_step(s): Scanning time of one step. Default: 1s
         property: a 'TFT_property' class input.
         back: Whether scanning cycle for hysteresis or not.
 
@@ -124,6 +123,7 @@ class scan_core:
         self.V_fix = voltage_fix
         self.V_max = voltage_max
         self.V_step = voltage_step # V_step(V/s)
+        scan_time_step = 1
         self.t_step = scan_time_step
         self.trans = transfer_mode
         self.Vg_minus_Vth_min = 1e-4
@@ -135,6 +135,8 @@ class scan_core:
         self.Von = self.Vth + 0.015
         self.VT0 = self.Vth + 0.05
         self.PZC = 0 # zero charge potential
+        self.step = 200
+        self.wav_type = wav_type
         self.generate_point()
 
     def renew_property(self, property):
@@ -154,21 +156,41 @@ class scan_core:
         self.generate_point()
         return
 
+    def wav_generate(self, wav_type):
+        if wav_type == 'tri': # triangle
+            self.V_scan_array = np.concatenate((np.arange(0, self.V_max, self.V_step*self.t_step), 
+                    np.arange(self.V_max, 0, -self.V_step*self.t_step)),axis=0) + self.Vg_minus_Vth_min
+        elif wav_type == '1xspk': 
+            self.V_scan_array = np.concatenate((np.zeros((50,), dtype=np.float32), np.zeros((5,), dtype=np.float32)+self.V_max, 
+                    np.zeros((145,), dtype=np.float32)), axis=0) + self.Vg_minus_Vth_min  ## single spike
+        elif wav_type == '5xspk': 
+            self.V_scan_array = np.concatenate((
+                    np.zeros((50,), dtype=np.float32),
+                    np.zeros((5,), dtype=np.float32)+self.V_max, 
+                    np.zeros((5,), dtype=np.float32),
+                    np.zeros((5,), dtype=np.float32)+self.V_max, 
+                    np.zeros((5,), dtype=np.float32),                               
+                    np.zeros((5,), dtype=np.float32)+self.V_max, 
+                    np.zeros((5,), dtype=np.float32),
+                    np.zeros((5,), dtype=np.float32)+self.V_max, 
+                    np.zeros((5,), dtype=np.float32),                     
+                    np.zeros((5,), dtype=np.float32)+self.V_max, 
+                    np.zeros((5,), dtype=np.float32),                                   
+                    np.zeros((100,), dtype=np.float32)), axis=0) + self.Vg_minus_Vth_min  ## 5x spike
+        else:
+            self.V_scan_array = np.arange(0, self.V_max, self.V_step*self.t_step) + self.Vg_minus_Vth_min
+
     def generate_point(self):
         '''
         Calculation of all points.
         '''
-        if self.back:
-            self.V_scan_array = np.concatenate((np.arange(0, self.V_max, self.V_step*self.t_step), 
-                    np.arange(self.V_max, 0, -self.V_step*self.t_step)),axis=0) + self.Vg_minus_Vth_min
-
-        else:
-            self.V_scan_array = np.arange(0, self.V_max, self.V_step*self.t_step) + self.Vg_minus_Vth_min
-        self.step = len(self.V_scan_array)
+        self.wav_generate(self.wav_type)
+        # self.step = len(self.V_scan_array)
         step = self.step
         self.t_max = step * self.t_step
         self.t_array = np.arange(0, self.t_max, self.t_step)
         self.t_array[0] = self.t_step / 2
+        t_array = self.t_array
         self.V_fix_array = np.full((step),self.V_fix)
         # init array
         prop = self.property

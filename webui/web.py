@@ -52,7 +52,7 @@ with gr.Blocks() as demo:
                     [0.1, 0.3, 0.06, 0.02],
                     [0.3, 0.6, 0.1, 0.5],
                 ], 
-                os.path.join(os.path.dirname(__file__), "example_curves\\transfer_example.csv")
+                os.path.join(os.path.dirname(__file__), "example_curves/transfer_example.csv")
             ],
             [
                 1000, 10, 1e-8, 40, 20,
@@ -62,7 +62,7 @@ with gr.Blocks() as demo:
                     [0.1, 0.3, 0.06, 0.02],
                     [0.3, 0.6, 0.1, 0.5],
                 ], 
-                os.path.join(os.path.dirname(__file__), "example_curves\\transfer_example_k.csv")
+                os.path.join(os.path.dirname(__file__), "example_curves/transfer_example_k.csv")
             ],
             ],
             inputs=inps,
